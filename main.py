@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
-import requests
 import time
 import sys
 import shutil
