@@ -27,7 +27,7 @@ def pre_checks_os(operating_system, current_directory):
             csv_file.write("Time,Low Price,High Price\n")
 
     # Same as above, just for a Windows System
-    if operating_system == "windows":
+    if operating_system == "win32":
         if os.path.exists(current_directory + "\geckodriver.exe") is False:
             shutil.move(
                 current_directory + "\webdrivers\geckodriver_win64.exe",
@@ -89,5 +89,5 @@ if CURRENT_OS == "linux":
 else:
     shutil.move(
         CURRENT_DIRECTORY + "\geckodriver.exe",
-        CURRENT_DIRECTORY + "\webdrivers\geckodriver_win64",
+        CURRENT_DIRECTORY + "\webdrivers\geckodriver_win64.exe",
     )
