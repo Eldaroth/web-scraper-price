@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 import requests
 import time
 import sys
@@ -43,8 +44,12 @@ def pre_checks_os(operating_system, current_directory):
 pre_checks_os(CURRENT_OS, CURRENT_DIRECTORY)
 
 # Defines which browser will be used to open website with Selenium
-browser = webdriver.Firefox(executable_path=CURRENT_DIRECTORY + "/geckodriver")
-url = "https://www.digitec.ch/de/s1/product/xiaomi-mi-9t-639-128gb-dual-sim-48mp-carbon-black-mobiltelefon-11245142"
+options = Options()
+options.headless = True
+browser = webdriver.Firefox(
+    options=options, executable_path=CURRENT_DIRECTORY + "/geckodriver"
+)
+url = input("Please enter URL: ")
 
 # Opens the URL in a Firefox Browser Windows and loads the website
 browser.get(url)
