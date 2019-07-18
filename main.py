@@ -12,8 +12,8 @@ CURRENT_DIRECTORY = os.getcwd()
 
 
 def pre_checks_os(operating_system, current_directory):
-    # Checks if OS is a Linux System and moves the according webdriver for Selenium
-    # to the current working directory
+    # Checks if OS is a Linux System and moves the according webdriver
+    # for Selenium to the current working directory
     if operating_system == "linux":
         if os.path.exists(current_directory + "/geckodriver") is False:
             shutil.move(
@@ -24,7 +24,7 @@ def pre_checks_os(operating_system, current_directory):
         # Checks whether CSV file already exists, otherwise creates one
         if os.path.exists(current_directory + "/prices.csv") is False:
             csv_file = open("prices.csv", "a")
-            csv_file.write("Time,Device,Low Price,High Price\n")
+            csv_file.write("Time;Device;Low Price;High Price\n")
 
     # Same as above, just for a Windows System
     elif operating_system == "win32":
@@ -37,7 +37,7 @@ def pre_checks_os(operating_system, current_directory):
         # Checks whether CSV file already exists, otherwise creates one
         if os.path.exists(current_directory + "\prices.csv") is False:
             csv_file = open("prices.csv", "a")
-            csv_file.write("Time,Device,Low Price,High Price\n")
+            csv_file.write("Time;Device;Low Price;High Price\n")
 
 
 pre_checks_os(CURRENT_OS, CURRENT_DIRECTORY)
@@ -74,7 +74,7 @@ device = json.loads(price_container)["name"]
 # Saves the price values with a time stamp in a CSV file
 csv_file = open("prices.csv", "a")
 time_stamp = time.strftime("%d.%m.%Y %H:%M:%S", time.localtime())
-csv_file.write(time_stamp + "," + device + "," + str(low_price) + "," + str(high_price))
+csv_file.write(time_stamp + ";" + device + ";" + str(low_price) + ";" + str(high_price))
 csv_file.write("\n")
 csv_file.close
 
