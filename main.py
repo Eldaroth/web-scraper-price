@@ -24,10 +24,10 @@ def pre_checks_os(operating_system, current_directory):
         # Checks whether CSV file already exists, otherwise creates one
         if os.path.exists(current_directory + "/prices.csv") is False:
             csv_file = open("prices.csv", "a")
-            csv_file.write("Time,Low Price,High Price\n")
+            csv_file.write("Time,Device,Low Price,High Price\n")
 
     # Same as above, just for a Windows System
-    if operating_system == "win32":
+    elif operating_system == "win32":
         if os.path.exists(current_directory + "\geckodriver.exe") is False:
             shutil.move(
                 current_directory + "\webdrivers\geckodriver_win64.exe",
@@ -37,7 +37,7 @@ def pre_checks_os(operating_system, current_directory):
         # Checks whether CSV file already exists, otherwise creates one
         if os.path.exists(current_directory + "\prices.csv") is False:
             csv_file = open("prices.csv", "a")
-            csv_file.write("Time,Low Price,High Price\n")
+            csv_file.write("Time,Device,Low Price,High Price\n")
 
 
 pre_checks_os(CURRENT_OS, CURRENT_DIRECTORY)
@@ -69,11 +69,12 @@ price_container = browser.execute_script(
 )
 low_price = json.loads(price_container)["offers"]["lowPrice"]
 high_price = json.loads(price_container)["offers"]["highPrice"]
+device = json.loads(price_container)["name"]
 
 # Saves the price values with a time stamp in a CSV file
 csv_file = open("prices.csv", "a")
 time_stamp = time.strftime("%d.%m.%Y %H:%M:%S", time.localtime())
-csv_file.write(time_stamp + "," + str(low_price) + "," + str(high_price))
+csv_file.write(time_stamp + "," + device + "," + str(low_price) + "," + str(high_price))
 csv_file.write("\n")
 csv_file.close
 
@@ -86,7 +87,7 @@ if CURRENT_OS == "linux":
         CURRENT_DIRECTORY + "/geckodriver",
         CURRENT_DIRECTORY + "/webdrivers/geckodriver_linux64",
     )
-else:
+elif CURRENT_OS == "win32":
     shutil.move(
         CURRENT_DIRECTORY + "\geckodriver.exe",
         CURRENT_DIRECTORY + "\webdrivers\geckodriver_win64.exe",
