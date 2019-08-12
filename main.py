@@ -1,58 +1,46 @@
+import json
+import os
+import shutil
+import sys
+import time
+
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
-import time
-import sys
-import shutil
-import os
-import json
 
 # Constants to find out current Operating System and Working Directory
 CURRENT_OS = sys.platform
 CURRENT_DIRECTORY = os.getcwd()
 
 def pre_checks_os(operating_system, current_directory):
-    # Checks if OS is a Linux System and moves the according webdriver
-    # for Selenium to the current working directory
+    """ Checks for the OS and moves the according webdriver
+    for Selenium to the current working directory"""
     if operating_system == "linux":
-        if os.path.exists(current_directory + "/geckodriver") is False:
+        if os.path.exists(os.path.join(current_directory, "geckodriver")) is False:
             shutil.move(
-                current_directory + "/webdrivers/geckodriver_linux64",
-                current_directory + "/geckodriver",
+                os.path.join(current_directory, "webdrivers", "geckodriver_linux64"),
+                os.path.join(current_directory, "geckodriver"),
             )
         time.sleep(5)
-        # Checks whether CSV file already exists, otherwise creates one
-        if os.path.exists(current_directory + "/prices.csv") is False:
-            csv_file = open("prices.csv", "a")
-            csv_file.write("Time;Device;Low Price;High Price\n")
-            csv_file.close()
-        time.sleep(5)
-        # Checks whether url txt file already exists, otherwise gives warning
-        if os.path.exists(current_directory + "/url.txt") is False:
-            url_file = open("url.txt", "w")
-            print("WARNING: No URL provided for program, please edit file 'url.txt' first")
-            url_file.close()
-            sys.exit()
-
     # Same as above, just for a Windows System
     elif operating_system == "win32":
-        if os.path.exists(current_directory + r"\geckodriver.exe") is False:
+        if os.path.exists(os.path.join(current_directory, "geckodriver.exe")) is False:
             shutil.move(
-                current_directory + r"\webdrivers\geckodriver_win64.exe",
-                current_directory + r"\geckodriver.exe",
+                os.path.join(current_directory, "webdrivers", "geckodriver_win64.exe"),
+                os.path.join(current_directory, "geckodriver.exe"),
             )
         time.sleep(5)
-        # Checks whether CSV file already exists, otherwise creates one
-        if os.path.exists(current_directory + r"\prices.csv") is False:
-            csv_file = open("prices.csv", "a")
-            csv_file.write("Time;Device;Low Price;High Price\n")
-            csv_file.close()
-        time.sleep(5)
-        # Checks whether url txt file already exists, otherwise gives warning
-        if os.path.exists(current_directory + r"\url.txt") is False:
-            url_file = open("url.txt", "w")
-            print("WARNING: No URL provided for program, please edit file 'url.txt' first")
-            url_file.close()
-            sys.exit()
+    # Checks whether CSV file already exists, otherwise creates one
+    if os.path.exists(os.path.join(current_directory, "prices.csv")) is False:
+        csv_file = open("prices.csv", "a")
+        csv_file.write("Time;Device;Low Price;High Price\n")
+        csv_file.close()
+    # Checks whether url txt file already exists, otherwise gives warning
+    if os.path.exists(os.path.join(current_directory, "url.txt")) is False:
+        url_file = open("url.txt", "w")
+        print("\nWARNING: No URL provided for program, please edit file 'url.txt' first!\n")
+        url_file.close()
+        sys.exit()
+
 
 def fetch_data(url):
     # Opens the URL in a Firefox Browser Windows and loads the website
@@ -79,25 +67,32 @@ options = Options()
 options.headless = True
 browser = webdriver.Firefox(
     options=options, executable_path=CURRENT_DIRECTORY + "/geckodriver"
+    # definition of executable_path only real necessary for Linux systems
 )
 
 # Opens the txt file containing all product urls and goes through them
 url_file = open("url.txt", "r")
+if os.stat(os.path.join(CURRENT_DIRECTORY, "url.txt")).st_size == 0:
+    print("\nNo URL provided, please edit 'url.txt' file!\n")
+    url_file.close()
+    sys.exit()
 for line in url_file:
     fetch_data(line)
-    print(line)
+    print("Fetching data for: \n" + line)
 
 # Clean up (closer Browser) once task is completed
 browser.close()
+url_file.close()
+print("\nSuccessfully finished!\n")
 
 # Move the used webdriver back into the folder and rename it accordingly
 if CURRENT_OS == "linux":
     shutil.move(
-        CURRENT_DIRECTORY + "/geckodriver",
-        CURRENT_DIRECTORY + "/webdrivers/geckodriver_linux64",
+        os.path.join(CURRENT_DIRECTORY, "geckodriver"),
+        os.path.join(CURRENT_DIRECTORY, "webdrivers", "geckodriver_linux64"),
     )
 elif CURRENT_OS == "win32":
     shutil.move(
-        CURRENT_DIRECTORY + r"\geckodriver.exe",
-        CURRENT_DIRECTORY + r"\webdrivers\geckodriver_win64.exe",
+        os.path.join(CURRENT_DIRECTORY, "geckodriver.exe"),
+        os.path.join(CURRENT_DIRECTORY, "webdrivers", "geckodriver_win64.exe"),
     )
